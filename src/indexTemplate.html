@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8" />
+		<title><%-title%></title>
+		<style>
+			:root {
+				--background-color: #fff;
+
+				--color-blue: #049ef4;
+				--text-color: #444;
+				--secondary-text-color: #9e9e9e;
+
+				--font-size: 16px;
+				--line-height: 26px;
+
+				--border-style: 1px solid #e8e8e8;
+				--header-height: 48px;
+				--panel-width: 300px;
+				--panel-padding: 16px;
+				--icon-size: 20px;
+			}
+
+			html,
+			body {
+				height: 100%;
+			}
+			html {
+				font-size: calc(var(--font-size) - 1px);
+				line-height: calc(var(--line-height) - 1px);
+			}
+
+			body {
+				margin: 0px;
+				color: var(--text-color);
+				background-color: var(--background-color);
+			}
+
+			* {
+				box-sizing: border-box;
+				-webkit-font-smoothing: antialiased;
+				-moz-osx-font-smoothing: grayscale;
+			}
+
+			a {
+				text-decoration: none;
+			}
+			h1 {
+				font-size: 18px;
+				line-height: 24px;
+				font-weight: 1000;
+			}
+
+			h2 {
+				padding: 0;
+				margin: 16px 0;
+				font-size: calc(var(--font-size) - 1px);
+				line-height: var(--line-height);
+				font-weight: 800;
+				color: var(--color-blue);
+			}
+
+			h3 {
+				margin: 0;
+				font-weight: 500;
+				font-size: calc(var(--font-size) - 1px);
+				line-height: var(--line-height);
+				color: var(--secondary-text-color);
+			}
+
+			h1 a {
+				color: var(--color-blue);
+			}
+
+			#panel {
+				position: fixed;
+				z-index: 100;
+				left: 0px;
+				width: var(--panel-width);
+				height: 100%;
+				overflow: auto;
+				border-right: var(--border-style);
+				display: flex;
+				flex-direction: column;
+				transition: 0s 0s height;
+			}
+			#panel .header {
+				display: flex;
+				height: var(--header-height);
+				border-bottom: var(--border-style);
+				align-items: center;
+				justify-content: center;
+			}
+			#panel .header h1 {
+				color: var(--color-blue);
+			}
+			#panel .content {
+				flex: 1;
+				overflow-y: auto;
+				overflow-x: hidden;
+				-webkit-overflow-scrolling: touch;
+				padding: 20px var(--panel-padding) var(--panel-padding) var(--panel-padding);
+			}
+			#panel .content .link {
+				display: block;
+				position: relative;
+				color: var(--text-color);
+			}
+			#panel .content h2 {
+				margin-top: 32px;
+				border-top: var(--border-style);
+				padding-top: 12px;
+			}
+			#panel .content h2:first-child {
+				margin-top: 16px !important;
+				border-top: none;
+				padding-top: 0;
+			}
+			#viewer {
+				padding-left: var(--panel-width);
+			}
+
+			#viewer {
+				position: absolute;
+				border: 0px;
+				left: 0;
+				right: 0;
+				width: 100%;
+				height: 100%;
+				overflow: auto;
+			}
+		</style>
+	</head>
+	<body>
+		<div id="panel">
+			<div class="header">
+				<h1><%-title%></h1>
+			</div>
+			<div class="content">
+				<% samples.forEach((c)=>{%> <% if(c.category) {%>
+				<h2 data-category="<%=c.category%>"><%=c.category%></h2>
+				<%}%> <% c.samples.forEach((sample)=>{%>
+				<a class="link" href="<%=sample.file%>" target="viewer"><%=sample.name%></a>
+				<%})%> <%})%>
+			</div>
+		</div>
+		<iframe id="viewer" name="viewer" allowfullscreen allowvr onmousewheel></iframe>
+	</body>
+</html>

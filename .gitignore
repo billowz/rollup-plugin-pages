@@ -1,0 +1,14 @@
+.resp
+.gitmessage
+package-lock.json
+yarn.lock
+.sonarlint
+*.log
+.rpt2_cache
+.cover
+node_modules
+analysis
+coverage
+benchmark
+dist
+doc
