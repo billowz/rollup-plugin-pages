@@ -1,6 +1,6 @@
 {
 	"name": "rollup-plugin-sample",
-	"version": "0.0.1",
+	"version": "0.0.2",
 	"description": "Parse GLSL strings to ES module likely glslify",
 	"homepage": "https://github.com/billowz/rollup-plugin-sample#readme",
 	"keywords": [
