@@ -10,5 +10,5 @@ node_modules
 analysis
 coverage
 benchmark
-dist
+test/dist
 doc

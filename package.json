@@ -26,6 +26,12 @@
 		"test": "rollup -c test/rollup.config.js",
 		"build": "npm run lint"
 	},
+	"files": [
+		"src",
+		"CHANGELOG.md",
+		"README.md",
+		"LICENSE"
+	],
 	"dependencies": {
 		"chokidar": "^3.4.0",
 		"colorette": "^1.1.0",
