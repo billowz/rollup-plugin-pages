@@ -1,6 +1,6 @@
 {
 	"name": "rollup-plugin-sample",
-	"version": "0.0.2",
+	"version": "0.1.0",
 	"description": "Build sample pages for UI components",
 	"homepage": "https://github.com/billowz/rollup-plugin-sample#readme",
 	"keywords": [
