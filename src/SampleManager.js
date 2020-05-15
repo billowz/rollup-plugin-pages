@@ -15,7 +15,7 @@ const defaultSampleTemplate = path.join(__dirname, 'sampleTemplate.html'),
 
 const extReg = /\.[^\\/]+$/
 class SampleManager {
-	constructor(options, { watch, dist, sourcemap }) {
+	constructor(options, { dist, sourcemap, cache }) {
 		let {
 			sampleDir = 'samples',
 			sampleDist = 'samples',
@@ -26,6 +26,7 @@ class SampleManager {
 			indexTemplate = defaultIndexTemplate,
 			sampleData = {},
 			write = true,
+			watch = false,
 			server = true,
 			compile: rollupOptions = {}
 		} = options
@@ -33,6 +34,7 @@ class SampleManager {
 		this.write = write
 		this.watch = watch
 		this.sourcemap = sourcemap
+		this.cache = cache
 		this.rollupOptions = rollupOptions
 
 		this.sampleHtml = sampleHtml

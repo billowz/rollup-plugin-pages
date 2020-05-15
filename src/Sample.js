@@ -17,6 +17,7 @@ class Sample extends Emitter {
 		this.rollupOptions = manager.rollupOptions
 		this.templateData = manager.templateData
 		this.write = manager.write
+		this.cache = manager.cache
 
 		let name = path.basename(id)
 		if (name === 'index') {
@@ -45,11 +46,12 @@ class Sample extends Emitter {
 	async setScript(file) {
 		this.script = file
 		if (file) {
-			var { id, url, title, rollupOptions: options } = this,
+			var { id, url, title, rollupOptions: options, write } = this,
 				outName = title.replace(/ /g, '_')
 
 			options = Object.assign({}, options, {
 				input: file,
+				cache: this.cache,
 				output: Object.assign(
 					{
 						format: 'umd',
@@ -76,11 +78,12 @@ class Sample extends Emitter {
 							this.build()
 						}
 					}
-				])
+				]),
+				watch: Object.assign(options.watch || {}, { skipWrite: !write })
 			})
 
 			const bundle = await rollup.rollup(options)
-			if (this.write) {
+			if (write) {
 				await bundle.write(options.output)
 			} else {
 				await bundle.generate(options.output)
@@ -88,6 +91,13 @@ class Sample extends Emitter {
 			if (this.watch) {
 				console.log(`watch sample: ${bold(blue(id))} on ${green(file)}`)
 				this.rollup = rollup.watch(options)
+				if (!write) {
+					this.rollup.on('event', async ({ code }) => {
+						if (code === 'BUNDLE_END') {
+							await bundle.generate(options.output)
+						}
+					})
+				}
 			}
 		} else {
 			this.rollup && this.rollup.close()

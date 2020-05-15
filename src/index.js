@@ -12,9 +12,9 @@ module.exports = function (options = {}) {
 			const esModule = /^es/.test(output.format)
 			if (!sampleManager) {
 				sampleManager = new SampleManager(options, {
-					watch: process.env.ROLLUP_WATCH,
 					dist,
-					sourcemap: output.sourcemap
+					sourcemap: output.sourcemap,
+					cache: this.cache
 				})
 				sampleManager.addBundle(bundle, esModule)
 				await sampleManager.init()

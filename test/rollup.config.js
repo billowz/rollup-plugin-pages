@@ -13,7 +13,9 @@ export default {
 				return `Test - ${name || 'Examples'}`
 			},
 			statics: ['node_modules'],
-			server: process.env.ROLLUP_WATCH,
+			watch: !!process.env.ROLLUP_WATCH,
+			server: !!process.env.ROLLUP_WATCH,
+			write: false,
 			compile: {
 				external: ['test'],
 				output: {

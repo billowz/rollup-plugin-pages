@@ -51,21 +51,12 @@ Type: `string`
 
 Example:
 
-```js
-// parse samples at ./examples
-sample({ sampleDir: 'examples' })
-```
-
 Default: `samples`
 
 #### sampleDist
 
-The path relative to the `$outputDir` to output the generated files file
-
-```js
-// generate sample files to disk: $outputDir/examples and server $url/examples
-sample({ sampleDist: 'examples' })
-```
+The path relative to the `$outputDir` to output the generated files file, generate sample files to disk:
+`$outputDir/examples` and server `$url/examples`
 
 Type: `string`
 
@@ -76,8 +67,6 @@ Default: `samples`
 The sample html file pattern
 
 Type: `string`
-
-Example: `sample({ sampleHtml: "**/*.demo.html" })`
 
 Default: `**/*.html`
 
@@ -121,8 +110,6 @@ Example:
 #### sampleScript
 
 The sample script file pattern
-
-Example: `sample({ sampleScript: "**/*.demo.js" })`
 
 Default: `**/*.spl.js`
 
@@ -238,22 +225,28 @@ Default:
 
 ```js
 {
-	input: $sampleScript, // invariable
 	plugins: [],
 	output: {
 		format: "umd",
 		name: $sampleName,
-		file: $sampleOutScript, // invariable
 		sourcemap: $output.sourcemap
 	}
 }
 ```
 
+#### watch
+
+Watch the sample files
+
+Type: `boolean`
+
+Default: `false`
+
 #### write
 
 Write the generated files to `$outputDir/$sampleDist`
 
-Example: `sample({ write: false })`
+Type: `boolean`
 
 Default: `true`
 
@@ -263,8 +256,6 @@ Start the dev server
 
 Type: `boolean`
 
-Example: `sample({ server: false })`
-
 Default: `true`
 
 #### host
@@ -273,17 +264,13 @@ The host the server should listen on
 
 Type: `string`
 
-Example: `sample({ host: 'localhost' })`
-
-Default: `0.0.0.0`
+Default: `"0.0.0.0"`
 
 #### port
 
 The port the server should listen on
 
 Type: `number`
-
-Example: `sample({ port: 3000 })`
 
 Default: `8080`
 
