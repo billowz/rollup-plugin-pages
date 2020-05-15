@@ -31,7 +31,7 @@ class Server {
 
 		statics.forEach((dir) => {
 			if (typeof dir === 'string') {
-				this.use(koaStatic(dir))
+				this.use(koaStatic(dir), dir)
 			} else if (dir) {
 				this.use(koaStatic(dir.path), dir.mount)
 			}

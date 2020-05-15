@@ -24,7 +24,7 @@ class Sample extends Emitter {
 		}
 		name = name.replace(/_/g, ' ')
 		this.name = name
-		this.title = parseString(manager.sampleTitle, name, [id, name])
+		this.title = parseString(manager.sampleTitle, name, [name, id])
 
 		this.reset()
 	}
@@ -53,13 +53,12 @@ class Sample extends Emitter {
 				output: Object.assign(
 					{
 						format: 'umd',
-						name: 'Sample',
 						sourcemap: this.sourcemap
 					},
 					options.output,
 					{
 						file: id + '.js',
-						name: parseString(options.output.name, outName, [id, file, outName])
+						name: parseString(options.output.name, outName, [outName, id])
 					}
 				),
 				plugins: (options.plugins || []).concat([

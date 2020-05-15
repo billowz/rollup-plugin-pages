@@ -1,14 +1,21 @@
 {
 	"name": "rollup-plugin-sample",
 	"version": "0.0.1",
-	"description": "Parse GLSL strings to ES module likely glslify",
+	"description": "Build sample pages for UI components",
 	"homepage": "https://github.com/billowz/rollup-plugin-sample#readme",
 	"keywords": [
 		"rollup",
 		"plugin",
+		"components",
+		"frontend",
+		"template",
+		"user interface",
+		"ui",
 		"development",
 		"server",
-		"example"
+		"example",
+		"demo",
+		"sample"
 	],
 	"author": "Billow Z <billowz@hotmail.com>",
 	"repository": {

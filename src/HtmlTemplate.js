@@ -4,7 +4,7 @@ const Emitter = require('events'),
 	fs = require('fs'),
 	path = require('path'),
 	{ green } = require('colorette'),
-	{ makeHtmlAttributes, identCode, htmlTags, normalizePath } = require('./util')
+	{ normalizePath } = require('./util')
 
 class HtmlTemplate extends Emitter {
 	constructor(template, watch) {
@@ -96,6 +96,23 @@ class HtmlTemplate extends Emitter {
 function loadFileTemplate(file) {
 	console.log(`load html file: ${green(file)}`)
 	return ejs.compile(fs.readFileSync(file).toString())
+}
+
+function identCode(code, ident) {
+	return code && ident ? ident + code.replace(/\n/g, '\n' + ident) : code
+}
+
+function makeHtmlAttributes(attributes) {
+	if (!attributes) return ''
+	const attrs = []
+	for (const key in attributes) {
+		attrs.push(`${key}="${attributes[key]}"`)
+	}
+	return attrs.join(' ')
+}
+
+function htmlTags(tags, ident) {
+	return tags.join('\n' + (ident || ''))
 }
 
 module.exports = HtmlTemplate

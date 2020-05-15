@@ -9,11 +9,11 @@ export default {
 			sampleDir: 'test/samples',
 			sampleDist: 'examples',
 			sampleScript: '**/*.spl.js',
-			sampleTitle(id, title) {
-				return `Test - ${title || 'Examples'}`
+			sampleTitle(name, id) {
+				return `Test - ${name || 'Examples'}`
 			},
-			statics: [{ path: 'node_modules', mount: 'node_modules' }],
-			server: false,
+			statics: ['node_modules'],
+			server: process.env.ROLLUP_WATCH,
 			compile: {
 				external: ['test'],
 				output: {

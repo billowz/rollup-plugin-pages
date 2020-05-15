@@ -30,20 +30,5 @@ module.exports = {
 			dist[key] = source[key]
 		}
 		return assigned
-	},
-	identCode(code, ident) {
-		return code && ident ? ident + code.replace(/\n/g, '\n' + ident) : code
-	},
-	makeHtmlAttributes(attributes) {
-		if (!attributes) return ''
-		const attrs = []
-		for (const key in attributes) {
-			attrs.push(`${key}="${attributes[key]}"`)
-		}
-		return attrs.join(' ')
-	},
-	htmlTags(tags, ident) {
-		ident = ident || ''
-		return ident + tags.join('\n' + ident)
 	}
 }
