@@ -108,9 +108,9 @@ class SampleManager {
 					this.sampleFileProcessor((sample) => sample && sample.setScript(null), this.scriptExt)
 				)
 		}
-		if (this.server) await this.server.listen()
 		this.inited = true
 		this.buildIndex()
+		if (this.server) await this.server.listen()
 	}
 
 	sampleFileProcessor(cb, ext, create) {
