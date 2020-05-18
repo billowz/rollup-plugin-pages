@@ -1,3 +1,9 @@
+# [0.1.1](https://github.com/billowz/rollup-plugin-sample/compare/v0.1.0...v0.1.1 ) (2020-05-18)
+
+### Bug Fixes
+
+* fix server startup order ([d66eb44](https://github.com/billowz/rollup-plugin-sample/commit/d66eb44 ))
+
 # [0.1.0](https://github.com/billowz/rollup-plugin-sample/compare/v0.0.2...v0.1.0 ) (2020-05-15)
 
 ### Features
