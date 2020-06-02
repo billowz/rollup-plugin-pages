@@ -49,6 +49,7 @@ class Server {
 							.join('\n' + ' '.repeat(14))}`
 					)
 				})
+				this.server.on('error', (err) => reject(err))
 			})
 		}
 	}
