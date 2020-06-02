@@ -1,3 +1,9 @@
+# [0.1.2](https://github.com/billowz/rollup-plugin-sample/compare/v0.1.1...v0.1.2 ) (2020-06-02)
+
+### Bug Fixes
+
+* Fix server error handler ([09b70ac](https://github.com/billowz/rollup-plugin-sample/commit/09b70ac ))
+
 # [0.1.1](https://github.com/billowz/rollup-plugin-sample/compare/v0.1.0...v0.1.1 ) (2020-05-18)
 
 ### Bug Fixes
