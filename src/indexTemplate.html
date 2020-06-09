@@ -4,6 +4,7 @@
 		<meta charset="utf-8" />
 		<title><%-title%></title>
 		<style>
+
 			:root {
 				--background-color: #fff;
 
@@ -16,6 +17,7 @@
 
 				--border-style: 1px solid #e8e8e8;
 				--sample-header-height: 48px;
+				--sample-footer-height: 0px;
 				--sample-nav-width: 300px;
 				--sample-nav-padding: 16px;
 				--icon-size: 20px;
@@ -71,75 +73,74 @@
 			h1 a {
 				color: var(--color-blue);
 			}
-
-			.sample-nav {
-				position: fixed;
-				z-index: 100;
-				left: 0px;
-				width: var(--sample-nav-width);
-				height: 100%;
-				overflow: auto;
-				border-right: var(--border-style);
+      
+      body {
 				display: flex;
-				flex-direction: column;
-				transition: 0s 0s height;
-			}
-			.sample-nav .sample-header {
+        flex-direction: row;
+      }
+      
+      .sample-nav {
+        width: var(--sample-nav-width);
+        display: flex;
+        flex-direction: column;
+      }
+      .sample-nav .sample-header {
 				display: flex;
 				height: var(--sample-header-height);
 				border-bottom: var(--border-style);
-				align-items: center;
-				justify-sample-menu: center;
-			}
-			.sample-nav .sample-header .sample-title {
+				justify-content: center;
+      }
+      .sample-nav .sample-header .sample-title {
 				color: var(--color-blue);
 			}
-			.sample-nav .sample-menu {
+      
+      .sample-nav .sample-menu {
+        display: flex;
+        flex-direction: column;
 				flex: 1;
 				overflow-y: auto;
 				overflow-x: hidden;
 				-webkit-overflow-scrolling: touch;
 				padding: 20px var(--sample-nav-padding) var(--sample-nav-padding) var(--sample-nav-padding);
-			}
-			.sample-nav .sample-menu .link {
-				display: block;
-				position: relative;
-				color: var(--text-color);
-			}
+      }
+      
 			.sample-nav .sample-menu h2 {
 				margin-top: 32px;
 				border-top: var(--border-style);
 				padding-top: 12px;
 			}
-			.sample-nav .sample-menu h2:first-child {
-				margin-top: 16px !important;
-				border-top: none;
-				padding-top: 0;
+      
+			.sample-nav .sample-menu .link {
+				display: block;
+				color: var(--text-color);
 			}
+      
 			.sample-view {
-				padding-left: var(--sample-nav-width);
-			}
-
-			.sample-view {
-				position: absolute;
-				border: 0px;
-				left: 0;
-				right: 0;
-				width: 100%;
-				height: 100%;
-				overflow: auto;
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        padding: 0 5px;
 			}
 			.sample-view .sample-header {
+				height: var(--sample-header-height);
+			}
+			.sample-view .sample-header .sample-title{
+				color: var(--text-color);
+        text-align: center;
 			}
 			.sample-view .sample-viewer {
-				position: absolute;
-				border: 0px;
-				left: 0;
-				right: 0;
-				width: 100%;
-				height: 100%;
-				overflow: auto;
+        flex: 1;
+				border: none;
 			}
+			.sample-view .sample-footer {
+				display: flex;
+        flex-direction: row;
+				justify-content: center;
+				height: var(--sample-footer-height);
+			}
+			.sample-view .sample-footer > * {
+        margin: 0 5px;
+      }
 		</style>
 	</head>
 	<body>
@@ -151,22 +152,20 @@
 				<% samples.forEach((c)=>{%> <% if(c.category) {%>
 				<h2 data-category="<%=c.category%>"><%=c.category%></h2>
 				<%}%> <% c.samples.forEach((sample)=>{%>
-				<a
-					class="link"
-					href="<%=sample.file%>"
-					target="viewer"
-					onClick="document.getElementById().innerText='<%=sample.title%>'"
-					><%=sample.name%></a
-				>
+				<a class="link" href="<%=sample.file%>" target="viewer"
+					onClick="document.getElementById('sample-title').innerText='<%=sample.title%>'">
+          <%=sample.name%>
+        </a>
 				<%})%> <%})%>
 			</div>
 		</div>
 		<div class="sample-view">
 			<div class="sample-header">
-				<h1 class="sample-title"></h1>
+				<h1 id="sample-title" class="sample-title"></h1>
 			</div>
 			<iframe id="viewer" class="sample-viewer" name="viewer" allowfullscreen allowvr onmousewheel></iframe>
-			<div class="sample-footer"></div>
+			<div class="sample-footer">
+      </div>
 		</div>
 	</body>
 </html>
