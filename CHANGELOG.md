@@ -1,3 +1,9 @@
+# [0.1.3](https://github.com/billowz/rollup-plugin-sample/compare/v0.1.2...v0.1.3 ) (2020-06-09)
+
+### Bug Fixes
+
+* fix default template ([4c0932f](https://github.com/billowz/rollup-plugin-sample/commit/4c0932f ))
+
 # [0.1.2](https://github.com/billowz/rollup-plugin-sample/compare/v0.1.1...v0.1.2 ) (2020-06-02)
 
 ### Bug Fixes
