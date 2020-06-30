@@ -15,7 +15,7 @@ const defaultSampleTemplate = path.join(__dirname, 'sampleTemplate.html'),
 
 const extReg = /\.[^\\/]+$/
 class SampleManager {
-	constructor(options, { dist, sourcemap, cache }) {
+	constructor(options, { dist, sourcemap, cache = {} }) {
 		let {
 			sampleDir = 'samples',
 			sampleDist = 'samples',
@@ -31,19 +31,36 @@ class SampleManager {
 			compile: rollupOptions = {}
 		} = options
 
+		sampleDir = path.isAbsolute(sampleDir) ? sampleDir : path.join(process.cwd(), sampleDir)
+		sampleDist = path.join(dist || '', sampleDist || '')
+		sampleBaseUrl = sampleDist || ''
+
+		rollupOptions = Object.assign({}, rollupOptions, {
+			cache,
+			output: Object.assign(
+				{
+					format: 'umd',
+					sourcemap
+				},
+				rollupOptions.output
+			),
+			watch: Object.assign({}, rollupOptions.watch, { skipWrite: !write })
+		})
+
 		this.write = write
 		this.watch = watch
 		this.sourcemap = sourcemap
 		this.cache = cache
-		this.rollupOptions = rollupOptions
 
 		this.sampleHtml = sampleHtml
 		this.sampleScript = sampleScript
 		this.sampleTitle = sampleTitle
 		this.dist = dist
-		this.sampleDist = path.join(dist || '', sampleDist || '')
-		this.sampleBaseUrl = sampleDist || ''
-		this.sampleDir = path.isAbsolute(sampleDir) ? sampleDir : path.join(process.cwd(), sampleDir)
+		this.sampleDir = sampleDir
+		this.sampleDist = sampleDist
+		this.sampleBaseUrl = sampleBaseUrl
+
+		this.rollupOptions = rollupOptions
 
 		this.userScripts = (options.scripts || []).map(parseSource)
 		this.userStyles = (options.styles || []).map(parseSource)
@@ -150,12 +167,12 @@ class SampleManager {
 					file,
 					url,
 					type: 'asset',
-					code: this.indexTemplate.compileHtml({
+					code: this.indexTemplate.compile({
 						...options,
 						file,
 						samples: this.parseSampleCategory({ file })
 					}),
-					content: this.indexTemplate.compileHtml({
+					content: this.indexTemplate.compile({
 						...options,
 						url,
 						samples: this.parseSampleCategory({ url })

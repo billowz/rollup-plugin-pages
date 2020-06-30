@@ -8,8 +8,9 @@ module.exports = function (options = {}) {
 	return {
 		name: 'sample',
 		async generateBundle(output, bundle) {
-			const dist = normalizePath(path.join(output.dir || '', output.file ? path.dirname(output.file) : ''))
-			const esModule = /^es/.test(output.format)
+			const dist = normalizePath(path.join(output.dir || '', output.file ? path.dirname(output.file) : '')),
+				esModule = /^es/.test(output.format)
+			console.log('')
 			if (!sampleManager) {
 				sampleManager = new SampleManager(options, {
 					dist,

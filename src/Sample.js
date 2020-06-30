@@ -17,7 +17,6 @@ class Sample extends Emitter {
 		this.rollupOptions = manager.rollupOptions
 		this.templateData = manager.templateData
 		this.write = manager.write
-		this.cache = manager.cache
 
 		let name = path.basename(id)
 		if (name === 'index') {
@@ -44,25 +43,22 @@ class Sample extends Emitter {
 	}
 
 	async setScript(file) {
+		this.watcher && this.watcher.close()
+		this.watcher = null
+
 		this.script = file
 		if (file) {
 			var { id, url, title, rollupOptions: options, write } = this,
 				outName = title.replace(/ /g, '_')
 
+			console.log(`compiling sample: ${bold(blue(id))} from ${green(file)}`)
+
 			options = Object.assign({}, options, {
 				input: file,
-				cache: this.cache,
-				output: Object.assign(
-					{
-						format: 'umd',
-						sourcemap: this.sourcemap
-					},
-					options.output,
-					{
-						file: id + '.js',
-						name: parseString(options.output.name, outName, [outName, id])
-					}
-				),
+				output: Object.assign({}, options.output, {
+					file: id + '.js',
+					name: parseString(options.output.name, outName, [outName, id])
+				}),
 				plugins: (options.plugins || []).concat([
 					{
 						name: 'sample',
@@ -73,35 +69,47 @@ class Sample extends Emitter {
 								path.dirname(url),
 								/^es/.test(output.format)
 							)
-							console.log(`compiled sample: ${bold(blue(id))} from ${green(file)}`)
 							this.reset(files, Object.values(scripts), Object.values(styles))
+							console.log(`bundles sample: ${bold(blue(id))} from ${green(file)}`)
 							this.build()
 						}
 					}
-				]),
-				watch: Object.assign(options.watch || {}, { skipWrite: !write })
+				])
 			})
 
 			const bundle = await rollup.rollup(options)
-			if (write) {
+			console.log('')
+			if (this.watch) {
+				const watcher = (this.watcher = rollup.watch(options)),
+					generator = ({ code }) => {
+						if (code === 'BUNDLE_END') {
+							bundle.generate(options.output)
+						}
+					}
+				return new Promise((resolve, reject) => {
+					watcher.on('event', wait)
+					function wait({ code, error }) {
+						if (code === 'ERROR') {
+							watcher.off('event', wait)
+							reject(error)
+						} else if (!write) {
+							if (code === 'BUNDLE_END') {
+								bundle.generate(options.output).then(resolve, reject)
+								watcher.off('event', wait)
+								watcher.on('event', generator)
+							}
+						} else if (code === 'END') {
+							watcher.off('event', wait)
+							resolve()
+						}
+					}
+				})
+			} else if (write) {
 				await bundle.write(options.output)
 			} else {
 				await bundle.generate(options.output)
 			}
-			if (this.watch) {
-				console.log(`watch sample: ${bold(blue(id))} on ${green(file)}`)
-				this.rollup = rollup.watch(options)
-				if (!write) {
-					this.rollup.on('event', async ({ code }) => {
-						if (code === 'BUNDLE_END') {
-							await bundle.generate(options.output)
-						}
-					})
-				}
-			}
 		} else {
-			this.rollup && this.rollup.close()
-			this.rollup = null
 			this.reset()
 			this.build()
 		}
@@ -132,8 +140,8 @@ class Sample extends Emitter {
 				file,
 				url,
 				type: 'asset',
-				code: template.compileHtml({ ...options, file }),
-				content: template.compileHtml({ ...options, url })
+				code: template.compile({ ...options, file }),
+				content: template.compile({ ...options, url })
 			}
 		this.page = page
 		files[page.file] = page
@@ -149,8 +157,8 @@ class Sample extends Emitter {
 	}
 
 	destory() {
-		this.rollup && this.rollup.close()
-		this.rollup = null
+		this.watcher && this.watcher.close()
+		this.watcher = null
 	}
 }
 

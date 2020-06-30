@@ -31,8 +31,10 @@ class Server {
 
 		statics.forEach((dir) => {
 			if (typeof dir === 'string') {
+				console.log(`mount static source: ${green(dir)} from ${green(dir)}`)
 				this.use(koaStatic(dir), dir)
 			} else if (dir) {
+				console.log(`mount static source: ${green(dir.mount)} from ${green(dir.path)}`)
 				this.use(koaStatic(dir.path), dir.mount)
 			}
 		})

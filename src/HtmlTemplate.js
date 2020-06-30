@@ -26,7 +26,7 @@ class HtmlTemplate extends Emitter {
 		return this
 	}
 
-	compileHtml(options, onErr) {
+	compile(options, onErr) {
 		const { file, url, scripts = [], styles = [], links = [], metas = [] } = options
 		const base = path.dirname(file || url)
 
