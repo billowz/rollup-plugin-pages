@@ -1,3 +1,10 @@
+# [0.1.4](https://github.com/billowz/rollup-plugin-sample/compare/v0.1.3...v0.1.4 ) (2020-07-04)
+
+### Bug Fixes
+
+* Fix sampleManager var ([3f69150](https://github.com/billowz/rollup-plugin-sample/commit/3f69150 ))
+* fix console log ([4f8ead1](https://github.com/billowz/rollup-plugin-sample/commit/4f8ead1 ))
+
 # [0.1.3](https://github.com/billowz/rollup-plugin-sample/compare/v0.1.2...v0.1.3 ) (2020-06-09)
 
 ### Bug Fixes
