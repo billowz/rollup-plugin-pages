@@ -33,7 +33,7 @@ class SampleManager {
 
 		sampleDir = path.isAbsolute(sampleDir) ? sampleDir : path.join(process.cwd(), sampleDir)
 		sampleDist = path.join(dist || '', sampleDist || '')
-		sampleBaseUrl = sampleDist || ''
+		const sampleBaseUrl = sampleDist || ''
 
 		rollupOptions = Object.assign({}, rollupOptions, {
 			cache,
