@@ -1,41 +1,38 @@
-# rollup-plugin-sample
+# rollup-plugin-pages
 
 [![Appveyor][appveyor-badge]][appveyor] [![Version][version-badge]][npm] [![Downloads][downloads-badge]][npm]
 
-Build sample pages for UI components
+Generate pages for webapp
 
 ## Installation
 
 ```
-npm install --save-dev rollup-plugin-sample
+npm install --save-dev rollup-plugin-pages
 ```
 
 ## Usage
 
 ```js
 // rollup.config.js
-import sample from 'rollup-plugin-sample'
 import resolve from 'rollup-plugin-resolve'
 import postcss from 'rollup-plugin-postcss'
+import pages from 'rollup-plugin-pages'
 
 export default {
-	input: 'index.js',
+	input: 'src/**/*.page.js',
 	output: {
-		file: 'dist/bundle.js'
+		dir: 'dist',
+		format: 'amd',
+		sourcemap: true,
+		chunkFileNames: '[name].js'
 	},
 	plugins: [
-		resolve(),
-		sample({
-			sampleDir: 'samples',
-			sampleDist: 'samples',
-			sampleScript: '**/*.spl.js',
-			sampleTitle(id, title) {
-				return `Test - ${title || 'Examples'}`
-			},
-			statics: [{ path: 'node_modules', mount: 'node_modules' }],
-			compile: {
-				plugins: [resolve(), postcss()]
-			}
+    resolve(),
+    postcss(),
+		pages({
+			dir: 'src',
+      template: 'src/**/*.html',
+      assets: ['src/assets/**']
 		})
 	]
 }
@@ -43,49 +40,62 @@ export default {
 
 ### Options
 
-#### sampleDir
+#### dir
 
-Directory of the sample source file
-
-Type: `string`
-
-Example:
-
-Default: `samples`
-
-#### sampleDist
-
-The path relative to the `$outputDir` to output the generated files file, generate sample files to disk:
-`$outputDir/examples` and server `$url/examples`
+Directory of the files
 
 Type: `string`
 
-Default: `samples`
+Default: `.`
 
-#### sampleHtml
+#### getPageId
 
-The sample html file pattern
+Get id of page by html path or script path for match the html and script page
+
+Type: `(path: string) => string`
+
+Default: `defaultPageId`
+
+#### getTitle
+
+Get the title of the Specified page
+
+Type: `(id: string, path: string, pkg: { [k: string]: any }) => string | string[]`
+
+Default: `defaultPageTitle`
+
+#### data
+
+The data to bind on the compiler of page template
+
+Type: `(id: string, path: string, pkg: { [k: string]: any }) => string | string[]`
+
+Default: `{}`
+
+#### template
+
+The file parttern of page templates
 
 Type: `string`
 
-Default: `**/*.html`
+Default: `join(dir, '**/*.html')`
 
 Compile the sample html by `ejs` with Context:
 
 ```js
-{
-  file: string
+type Page = {
+  id: string
   title: string
-  name: string
+  category: string[]
+  page: string
+  script: string
   data: any
-  scripts: Tag[]
-  styles: Tag[]
-  links: Tag[]
-  metas: Tag[]
-  scriptTags: (ident: string) => string[]
-  styleTags: (ident: string) => string[]
-  linkTags: (ident: string) => string[]
-  metaTags: (ident: string) => string[]
+  pkg: Package
+  header: string[]
+  body: string[]
+  pages?: Page[]
+  categories?: Page[]
+  walkCategory?: (enter: (page:Page, i:number, level:number)=>void, enter: (page:Page, i:number, level:number)=>void)=>void
 }
 ```
 
@@ -97,158 +107,48 @@ Example:
 	<head>
 		<meta charset="utf-8" />
 		<title><%-title%></title>
-		<%- styleTags("\t\t") %>
+		<%- header.join("\n\t\t") %>
 	</head>
 	<body>
 		<h1 style="text-align: center;"><%-title%></h1>
 
-		<%- scriptTags("\t\t") %>
-	</body>
+		<%- body.join("\n\t\t") %>
+  </body>
 </html>
+
 ```
 
-#### sampleScript
+#### defaultTemplate
 
-The sample script file pattern
+The default page template file
 
-Default: `**/*.spl.js`
+Type: `string`
 
-#### sampleTitle
-
-The title of sample page or index page
-
-Type: `string | (sampleName, sampleId) => string`
-
-Example: `sample({ sampleTitle: "Sample" })`
-
-Example: `sample({ sampleTitle: (title, file)=> "Samples" + (title ? " - " + title:"") })`
-
-Default: `$sampleName`
-
-#### sampleTemplate
-
-The default html template of sample pages
-
-Type: `string | (context) => string`
-
-Default: `node_modules/rollup-plugin-sample/src/sampleTemplate.html`
-
-The Template Context:
-
-```js
-{
-  file: string
-  title: string
-  name: string
-  data: any
-  scripts: Tag[]
-  styles: Tag[]
-  links: Tag[]
-  metas: Tag[]
-  scriptTags: (ident: string) => string[]
-  styleTags: (ident: string) => string[]
-  linkTags: (ident: string) => string[]
-  metaTags: (ident: string) => string[]
-}
-```
+Default: `defaultPageTemplate`
 
 #### indexTemplate
 
-The index page html template
+The default index page template file
 
-Type: `string | (context) => string`
+Type: `string`
 
-Default: `node_modules/rollup-plugin-sample/src/indexTemplate.html`
+Default: `defaultIndexPageTemplate`
 
-The Template Context:
+#### requirejs
 
-```js
-{
-  file: string
-  title: string // default: "Samples"
-  data: any
-  samples: {
-    category: string
-    samples: {
-      title: string
-      name: string
-      file: string
-      category: string
-    }[]
-  }[]
-  scripts: Tag[]
-  styles: Tag[]
-  links: Tag[]
-  metas: Tag[]
-  scriptTags: (ident: string) => string[]
-  styleTags: (ident: string) => string[]
-  linkTags: (ident: string) => string[]
-  metaTags: (ident: string) => string[]
-}
-```
+The path of requirejs
 
-#### sampleData
+Type: `string`
 
-The user data for compile html by `ejs`
+Default: `require.js`
 
-Default: `{}`
+#### assets
 
-#### compile
+The file parttern of asset files
 
-The rollup options for compiling sample scripts
+Type: `string[]`
 
-Type:
-
-```js
-Omit<RollupOptions, 'input' | 'output'> & {
-  output?: Omit<OutputOptions, 'file' | 'dir'> & {
-    name?: string | ((sampleVarName: string, sampleId: string) => string)
-  }
-}
-```
-
-Example:
-
-```js
-sample({
-	compile: {
-		plugins: [nodeResolve(), commonJs(), postCss()],
-		output: {
-			format: 'iife',
-			name: 'Sample'
-		}
-	}
-})
-```
-
-Default:
-
-```js
-{
-	plugins: [],
-	output: {
-		format: "umd",
-		name: $sampleName,
-		sourcemap: $output.sourcemap
-	}
-}
-```
-
-#### watch
-
-Watch the sample files
-
-Type: `boolean`
-
-Default: `false`
-
-#### write
-
-Write the generated files to `$outputDir/$sampleDist`
-
-Type: `boolean`
-
-Default: `true`
+Default: `[]`
 
 #### server
 
@@ -256,7 +156,7 @@ Start the dev server
 
 Type: `boolean`
 
-Default: `true`
+Default: `--server || Process.env.SERVER || rollup.watchMode`
 
 #### host
 
@@ -264,7 +164,7 @@ The host the server should listen on
 
 Type: `string`
 
-Default: `"0.0.0.0"`
+Default: `--host || Process.env.HOST || "0.0.0.0"`
 
 #### port
 
@@ -272,7 +172,7 @@ The port the server should listen on
 
 Type: `number`
 
-Default: `8080`
+Default: `--port || Process.env.PORT || 8080`
 
 #### publicPath
 
@@ -304,10 +204,10 @@ $ npm run test -- -w
 
 [MIT](http://opensource.org/licenses/MIT)
 
-[appveyor]: https://ci.appveyor.com/project/billowz/rollup-plugin-sample/branch/master
-[appveyor-badge]: https://img.shields.io/appveyor/ci/billowz/rollup-plugin-sample/master.svg
-[travis]: https://travis-ci.org/billowz/rollup-plugin-sample
-[travis-badge]: https://img.shields.io/travis/billowz/rollup-plugin-sample/master.svg
-[npm]: https://www.npmjs.com/package/rollup-plugin-sample/v/latest
-[downloads-badge]: https://img.shields.io/npm/dt/rollup-plugin-sample.svg
-[version-badge]: https://img.shields.io/npm/v/rollup-plugin-sample/latest.svg
+[appveyor]: https://ci.appveyor.com/project/billowz/rollup-plugin-pages/branch/master
+[appveyor-badge]: https://img.shields.io/appveyor/ci/billowz/rollup-plugin-pages/master.svg
+[travis]: https://travis-ci.org/billowz/rollup-plugin-pages
+[travis-badge]: https://img.shields.io/travis/billowz/rollup-plugin-pages/master.svg
+[npm]: https://www.npmjs.com/package/rollup-plugin-pages/v/latest
+[downloads-badge]: https://img.shields.io/npm/dt/rollup-plugin-pages.svg
+[version-badge]: https://img.shields.io/npm/v/rollup-plugin-pages/latest.svg

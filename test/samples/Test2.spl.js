@@ -1,4 +1,5 @@
 import test from '../lib'
 
-test('Test.spl.js')
+test('Test2.spl.js')
+
 test('<img src="./OIP.jpg"></img>')

@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8" />
+		<title><%-title%></title>
+	</head>
+	<body>
+		<div class="nav">
+			<div class="header">
+				<h1 class="title"><%-title%></h1>
+			</div>
+			<!-- prettier-ignore -->
+			<div class="menu">
+				<%walkCategory((page, i, level)=>{ var pad='\t'.repeat(level);%>
+				<%=pad%><div class="<%-page.categories?'node':'leaf'%>"><%if(page.isCategory){%>
+					<%=pad%><span class="category"><%-page.title%></span><%}else{%>
+					<%=pad%><a class="page"
+						  href="<%-page.page%>"
+						  target="viewer"
+						  onClick="document.getElementById('title').innerText='<%-page.category.concat(page.title).join(' / ')%>'">
+						<%=pad%><%-page.title%>
+					<%=pad%></a><%}%> <%},(page, i, level)=>{%>
+				<%='\t'.repeat(level)%></div>
+				<%})%>
+			</div>
+		</div>
+		<div class="view">
+			<div class="header">
+				<h1 id="title" class="title"></h1>
+			</div>
+			<iframe id="viewer" class="viewer" name="viewer" allowfullscreen allowvr onmousewheel></iframe>
+			<div class="footer"></div>
+		</div>
+
+		<style>
+			:root {
+				--font-size: 16px;
+				--line-height: 26px;
+				--text-color: #444;
+				--background-color: #fff;
+				--border-color: #e8e8e8;
+
+				--color-blue: #049ef4;
+				--secondary-text-color: #9e9e9e;
+
+				--header-height: 48px;
+				--footer-height: 0px;
+				--nav-width: 300px;
+				--icon-size: 20px;
+			}
+
+			html,
+			body {
+				height: 100%;
+			}
+
+			html {
+				font-size: calc(var(--font-size) - 1px);
+				line-height: calc(var(--line-height) - 1px);
+			}
+
+			body {
+				margin: 0px;
+				color: var(--text-color);
+				background-color: var(--background-color);
+			}
+
+			* {
+				box-sizing: border-box;
+				-webkit-font-smoothing: antialiased;
+				-moz-osx-font-smoothing: grayscale;
+			}
+
+			a {
+				text-decoration: none;
+			}
+
+			h1 {
+				font-size: 18px;
+				line-height: 24px;
+				font-weight: 1000;
+			}
+
+			body {
+				display: flex;
+				flex-direction: row;
+			}
+
+			.nav {
+				min-width: var(--nav-width);
+				display: flex;
+				flex-direction: column;
+			}
+
+			.nav .header {
+				display: flex;
+				padding: 0 20px;
+				height: var(--header-height);
+				border-bottom: 1px solid var(--border-color);
+				justify-content: center;
+			}
+
+			.nav .header .title {
+				color: var(--color-blue);
+			}
+
+			.nav .menu {
+				display: flex;
+				flex-direction: column;
+				flex: 1;
+				overflow: auto;
+				-webkit-overflow-scrolling: touch;
+				padding: 10px 8px;
+			}
+
+			.nav .menu .category,
+			.nav .menu .page {
+				display: block;
+				width: 100%;
+				color: var(--text-color);
+				padding: 0 8px;
+			}
+			.nav .menu .category {
+				color: var(--color-blue);
+			}
+			.nav .menu .page:hover {
+				background: var(--border-color);
+			}
+
+			.nav .menu .node > .node,
+			.nav .menu .node > .leaf {
+				margin-left: 8px;
+			}
+
+			.nav .menu > .node,
+			.nav .menu .node > .node {
+				margin-top: 12px;
+				padding-top: 12px;
+				border-top: 1px solid var(--border-color);
+			}
+			.nav .menu > .node:first-child {
+				margin-top: 0;
+				border: none;
+			}
+
+			.view {
+				flex: 1;
+				display: flex;
+				flex-direction: column;
+				padding: 0 5px;
+			}
+			.view .header {
+				height: var(--header-height);
+			}
+			.view .header .title {
+				color: var(--text-color);
+				text-align: center;
+			}
+			.view .viewer {
+				flex: 1;
+				border: none;
+			}
+			.view .footer {
+				display: flex;
+				flex-direction: row;
+				justify-content: center;
+				height: var(--footer-height);
+			}
+			.view .footer > * {
+				margin: 0 5px;
+			}
+		</style>
+	</body>
+</html>

@@ -1,59 +1,27 @@
 import resolve from '@rollup/plugin-node-resolve'
-import sample from '..'
+import pages from '..'
 
 export default {
-	input: 'test/lib/index.js',
+	input: 'test/samples/**/*.spl.js',
 	plugins: [
 		resolve(),
-		sample({
-			sampleDir: 'test/samples',
-			sampleDist: 'examples',
-			sampleScript: '**/*.spl.js',
-			sampleTitle(name, id) {
-				return `Test - ${name || 'Examples'}`
+		pages({
+			dir: 'test/samples',
+			template: 'test/samples/**/*.html',
+			data: {
+				header: [{ tag: 'link', attrs: { href: 'test.css' } }]
 			},
-			statics: ['node_modules'],
-			watch: !!process.env.ROLLUP_WATCH,
-			server: !!process.env.ROLLUP_WATCH,
-			write: false,
-			compile: {
-				external: ['test'],
-				output: {
-					globals: {
-						test: 'test'
-					}
-				}
-			},
-			scripts: [
-				'node_modules/vconsole/dist/vconsole.min.js',
-				{
-					code: `
-var vconsole
-if((navigator.userAgent.match(/(phone|pad|pod|iPhone|iPod|ios|iPad|Android|Mobile|BlackBerry|IEMobile|MQQBrowser|JUC|Fennec|wOSBrowser|BrowserNG|WebOS|Symbian|Windows Phone)/i)))
-	vconsole = new VConsole()
-	`
-				}
-			],
-			styles: [
-				{
-					code: `
-body {
-	margin: 0;
-	padding: 0;
-	position: absolute;
-	width: 100%;
-	height: 100%;
-}
-				`
-				}
-			]
+			assets: ['test/samples/**/*.css', 'test/samples/**/*.jpg']
 		})
 	],
 	output: {
-		compact: true,
-		name: 'test',
-		file: 'test/dist/test.js',
-		format: 'umd',
-		sourcemap: true
+		compact: false,
+		dir: 'test/dist',
+		format: 'amd',
+		sourcemap: true,
+		manualChunks: {
+			lib: ['test/lib']
+		},
+		chunkFileNames: '[name].js'
 	}
 }

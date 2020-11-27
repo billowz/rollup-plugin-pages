@@ -4,8 +4,8 @@ commit:
 
 plugins:
   - npm
-  - gzip -o rollup-plugin-sample.tar.gz src package.json README.md CHANGELOG.md LICENSE
-  - github -f rollup-plugin-sample.tar.gz
+  - gzip -o rollup-plugin-pages.tar.gz src package.json README.md CHANGELOG.md LICENSE
+  - github -f rollup-plugin-pages.tar.gz
 
 branchs:
   - { pattern: "^master$", channel: "latest" }
@@ -13,6 +13,7 @@ branchs:
   - { pattern: "^alpha$", channel: "alpha", prerelease: "alpha" }
 
 rules:
+  - { type: "bug" }
   - { type: "breaking", release: "major", note: "Breaking Changes", body: true }
   - { type: "feat", scope: "patch", release: "patch", note: "Features" }
   - { type: "feat", release: "minor", note: "Features" }
