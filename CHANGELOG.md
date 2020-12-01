@@ -1,3 +1,9 @@
+# [1.1.0](https://github.com/billowz/rollup-plugin-pages/compare/v1.0.0...v1.1.0 ) (2020-12-01)
+
+### Features
+
+* add output transform on asset files ([d3492f9](https://github.com/billowz/rollup-plugin-pages/commit/d3492f9 ))
+
 # [1.0.0](https://github.com/billowz/rollup-plugin-sample/compare/v0.1.3...v1.0.0 ) (2020-11-27)
 
 ### Breaking Changes
