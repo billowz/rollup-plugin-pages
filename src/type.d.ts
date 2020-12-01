@@ -42,7 +42,7 @@ export default function (
 		// The path of requirejs, default: `require.js`
 		requirejs?: string
 		// The file parttern of asset files, default: `[]`
-		assets?: string[]
+		assets?: (string | [string, (string | ((file: string) => string))?])[]
 		// Setup dev server
 		server?: boolean
 	} & ServerOptions

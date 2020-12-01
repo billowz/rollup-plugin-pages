@@ -126,13 +126,19 @@ module.exports = function (options = {}) {
 
 			await Promise.all(
 				flattenDeep(
-					assets.map((asset) =>
-						glob.sync(asset, globOptions).map(async (file) => {
+					assets.map((asset) => {
+						if (typeof asset === 'string') {
+							asset = [asset]
+						}
+						const [pattern, target] = asset
+						return glob.sync(pattern, globOptions).map(async (file) => {
 							const source = await getCache(file, readFile),
-								fileName = transformPath(file)
+								fileName = target
+									? outputPath(typeof target === 'function' ? target(file) : target)
+									: transformPath(file)
 							this.emitFile({ type: 'asset', id: fileName, fileName, source })
 						})
-					)
+					})
 				)
 			)
 
@@ -332,7 +338,10 @@ module.exports = function (options = {}) {
 		if (isAbsolute(relativePath)) {
 			relativePath = relative('./', file)
 		}
-		return normalizePath(relativePath).replace(/^(\.\.\/)+/g, '')
+		return outputPath(relativePath)
+	}
+	function outputPath(file) {
+		return normalizePath(file).replace(/^(\.\.\/)+/g, '')
 	}
 }
 

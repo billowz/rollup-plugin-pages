@@ -1,4 +1,4 @@
-import test from '../lib'
+import test from './test/Test.spl'
 
 test('Test2.spl.js')
 

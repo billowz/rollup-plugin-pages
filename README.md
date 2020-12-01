@@ -146,7 +146,7 @@ Default: `require.js`
 
 The file parttern of asset files
 
-Type: `string[]`
+Type: `(string | [string, (string | ((file: string) => string))?])[]`
 
 Default: `[]`
 

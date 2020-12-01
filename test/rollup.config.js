@@ -4,7 +4,6 @@ import pages from '..'
 export default {
 	input: 'test/samples/**/*.spl.js',
 	plugins: [
-		resolve(),
 		pages({
 			dir: 'test/samples',
 			template: 'test/samples/**/*.html',
@@ -12,7 +11,8 @@ export default {
 				header: [{ tag: 'link', attrs: { href: 'test.css' } }]
 			},
 			assets: ['test/samples/**/*.css', 'test/samples/**/*.jpg']
-		})
+		}),
+		resolve(),
 	],
 	output: {
 		compact: false,
