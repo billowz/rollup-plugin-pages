@@ -14,7 +14,6 @@ branchs:
 
 rules:
   - { type: "breaking", release: "major", note: "Breaking Changes", body: true }
-  - { type: "feat", scope: "patch", release: "patch", note: "Features" }
   - { type: "feat", release: "minor", note: "Features" }
   - { type: "fix", release: "patch", note: "Bug Fixes" }
   - { type: "security", release: "patch", note: "Security" }
