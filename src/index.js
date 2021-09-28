@@ -217,22 +217,27 @@ module.exports = function (options = {}) {
 						const pages = parent.pages || (parent.pages = []),
 							children = parent.children || (parent.children = {})
 						pages.push(page)
-						return (children[title] = initNode(children[title] ))
+						return (children[title] = initNode(children[title]))
 					},
 					parent = page.category.reduce(
 						(parent, title) =>
-							append(parent, title, (node) => (node || {
+							append(
+								parent,
 								title,
-								isPage: false,
-								isCategory: true,
-								data,
-								pkg
-							})),
+								(node) =>
+									node || {
+										title,
+										isPage: false,
+										isCategory: true,
+										data,
+										pkg
+									}
+							),
 						indexPage
 					)
 				page.isPage = true
 				append(parent, page.title, (node) => {
-					if(node){
+					if (node) {
 						page.pages = node.pages
 						page.children = node.children
 						page.isCategory = node.isCategory
@@ -267,7 +272,7 @@ module.exports = function (options = {}) {
 					walkHierachy(node.children, 0, enter, exit)
 				}
 			} else {
-				node.walkHierachy = ()=>{}
+				node.walkHierachy = () => {}
 			}
 			return node
 		}
@@ -307,8 +312,8 @@ module.exports = function (options = {}) {
 			compiler
 		}
 
-		function parseTag(tag){
-			if (typeof tag === 'string') return { html: ()=> tag }
+		function parseTag(tag) {
+			if (typeof tag === 'string') return { html: () => tag }
 			const { tag: tagName, attrs, body } = tag
 
 			return {
@@ -319,8 +324,8 @@ module.exports = function (options = {}) {
 				body: body || '',
 				html() {
 					return `<${this.tag} ${Object.entries(this.attrs)
-						.map(([attr, value])=>`${attr}="${value}"`).join(' ')
-					}${closedTag[tagName] ? `>` : `>${this.body}</${this.tag}>`}`
+						.map(([attr, value]) => `${attr}="${value}"`)
+						.join(' ')}${closedTag[tagName] ? `>` : `>${this.body}</${this.tag}>`}`
 				}
 			}
 		}

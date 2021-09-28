@@ -4,7 +4,7 @@ module.exports = {
 	},
 	mapObj(obj, cb) {
 		const out = {}
-		for(const k in obj) {
+		for (const k in obj) {
 			out[k] = cb(obj[k], k)
 		}
 		return out
