@@ -1,3 +1,9 @@
+# [1.2.0](https://github.com/billowz/rollup-plugin-pages/compare/v1.1.0...v1.2.0 ) (2021-09-28)
+
+### Features
+
+* change amd to esm module ([c6f6d29](https://github.com/billowz/rollup-plugin-pages/commit/c6f6d29 ))
+
 # [1.1.0](https://github.com/billowz/rollup-plugin-pages/compare/v1.0.0...v1.1.0 ) (2020-12-01)
 
 ### Features
