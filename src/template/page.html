@@ -3,9 +3,10 @@
 	<head>
 		<meta charset="utf-8" />
 		<title><%-title%></title>
-		<%- header.join("\n\t\t") %>
+		<%- header.map(h=>h.html()).join("\n\t\t") %>
 	</head>
 	<body>
-		<%- body.join("\n\t\t") %>
+		<%- body.map(h=>h.html()).join("\n\t\t") %>
+		<script type="module" src="<%=main%>"></script>
 	</body>
 </html>

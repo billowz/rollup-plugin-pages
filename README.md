@@ -68,7 +68,7 @@ Default: `defaultPageTitle`
 
 The data to bind on the compiler of page template
 
-Type: `(id: string, path: string, pkg: { [k: string]: any }) => string | string[]`
+Type: `any`
 
 Default: `{}`
 
@@ -80,23 +80,27 @@ Type: `string`
 
 Default: `join(dir, '**/*.html')`
 
-Compile the sample html by `ejs` with Context:
+Compile the html by `ejs` with Context:
 
 ```js
-type Page = {
-  id: string
+type Node = {
   title: string
-  category: string[]
-  page: string
-  script: string
+  isPage: boolean
+  isCategory: boolean
+  pages?: Node[]
+  children?: Node[]
   data: any
   pkg: Package
-  header: string[]
-  body: string[]
-  pages?: Page[]
-  categories?: Page[]
-  walkCategory?: (enter: (page:Page, i:number, level:number)=>void, enter: (page:Page, i:number, level:number)=>void)=>void
-}
+  walkHierachy: (enter: (page:Node, i:number, level:number)=>void, enter: (page:Node, i:number, level:number)=>void)
+} & ({
+  isPage: true
+  id: string
+  category: string[]
+  page: string
+  main: string
+  header: { html: ()=>string }[]
+  body: { html: ()=>string }[]
+})
 ```
 
 Example:
@@ -107,15 +111,13 @@ Example:
 	<head>
 		<meta charset="utf-8" />
 		<title><%-title%></title>
-		<%- header.join("\n\t\t") %>
+		<%- header.map(h=>h.html()).join("\n\t\t") %>
 	</head>
 	<body>
-		<h1 style="text-align: center;"><%-title%></h1>
-
-		<%- body.join("\n\t\t") %>
-  </body>
+		<%- body.map(h=>h.html()).join("\n\t\t") %>
+		<script type="module" src="<%=main%>"></script>
+	</body>
 </html>
-
 ```
 
 #### defaultTemplate
@@ -133,14 +135,6 @@ The default index page template file
 Type: `string`
 
 Default: `defaultIndexPageTemplate`
-
-#### requirejs
-
-The path of requirejs
-
-Type: `string`
-
-Default: `require.js`
 
 #### assets
 
@@ -188,7 +182,7 @@ Directories to serve static files from
 
 Type: `(string | {path: string, mount: string})[]`
 
-Example: `sample({ statics: ["node_modules", {path: "test", mount: "."}] })`
+Example: `pages({ statics: ["node_modules", {path: "test", mount: "."}] })`
 
 Default: `[]`
 

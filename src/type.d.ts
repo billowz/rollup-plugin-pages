@@ -17,12 +17,30 @@ export declare type Tag =
 			body?: string
 	  }
 
-export declare type PageData = {
-	[k: string]: any
-	header?: Tag[] // Header tags
-	body?: Tag[] // Body tags
-}
-
+/**
+ *
+ * Compile the html by `ejs` with Context:
+ *
+ * type Node = {
+ *   title: string
+ *   isPage: boolean
+ *   isCategory: boolean
+ *   pages?: Node[]
+ *   children?: Node[]
+ *   data: any
+ *   pkg: Package
+ *   walkHierachy: (enter: (page:Node, i:number, level:number)=>void, enter: (page:Node, i:number, level:number)=>void)
+ * } & ({
+ *   isPage: true
+ *   id: string
+ *   category: string[]
+ *   page: string
+ *   main: string
+ *   header: { html: ()=>string }[]
+ *   body: { html: ()=>string }[]
+ * })
+ *
+ */
 export default function (
 	options: {
 		// Page directory
@@ -32,7 +50,9 @@ export default function (
 		// Get id of page by html path or script path, default: `defaultPageTitle`
 		getTitle?: (id: string, path: string, pkg: { [k: string]: any }) => string | string[]
 		// The data for page compiler, default: {}
-		data?: PageData
+		data?: any
+		header?: Tag[] // Header tags
+		body?: Tag[] // Body tags
 		// The file parttern of page templates, default: `join(dir, '**/*.html')`
 		template?: string
 		// The default page template file, default: `defaultPageTemplate`

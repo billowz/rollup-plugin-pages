@@ -11,7 +11,7 @@ const { join, isAbsolute, relative, resolve, basename, dirname } = require('path
 	startCase = require('lodash/startCase'),
 	get = require('lodash/get'),
 	{ bold, cyan } = require('colorette'),
-	{ normalizePath } = require('./util'),
+	{ normalizePath, mapObj } = require('./util'),
 	Server = require('./Server')
 
 const globOptions = { absolute: true, nodir: true },
@@ -60,10 +60,11 @@ module.exports = function (options = {}) {
 		getPageId = defaultPageId,
 		getTitle = defaultPageTitle,
 		data = {},
+		header = [],
+		body = [],
 		template = join(dir, '**/*.html'),
 		defaultTemplate = defaultPageTemplate,
 		indexTemplate = defaultIndexPageTemplate,
-		requirejs = 'require.js',
 		assets = []
 	} = options
 
@@ -142,13 +143,6 @@ module.exports = function (options = {}) {
 				)
 			)
 
-			this.emitFile({
-				type: 'asset',
-				id: 'requirejs',
-				fileName: requirejs,
-				source: await getCache(require.resolve('requirejs/require.js'), readFile)
-			})
-
 			if (setupServer === true || (setupServer !== false && watchMode)) {
 				const sources = Object.values(bundle).reduce((sources, { fileName, code, source, map }) => {
 					if (sourcemap && map) {
@@ -192,17 +186,17 @@ module.exports = function (options = {}) {
 			indexCompiler = await getPageCompiler(indexTemplate),
 			indexId = getPageId('index.html'),
 			pageMap = {},
-			addPage = (compile, id, path, script) => {
-				pageMap[id] = createPage(compile, id, path || `${id}.html`, script)
+			addPage = (compiler, id, path, script) => {
+				pageMap[id] = createPage(compiler, id, path || `${id}.html`, script)
 			}
 
 		await Promise.all(
 			glob.sync(template, globOptions).map(async (file) => {
-				const compile = await getPageCompiler(file),
+				const compiler = await getPageCompiler(file),
 					path = transformPath(file),
 					id = getPageId(path),
 					chunk = entryMap[id]
-				addPage(compile, id, path, chunk && chunk.fileName)
+				addPage(compiler, id, path, chunk && chunk.fileName)
 			})
 		)
 
@@ -219,66 +213,77 @@ module.exports = function (options = {}) {
 
 		pages.forEach((page) => {
 			if (indexPage !== page) {
-				const append = (node, title, initCategory) => {
-						const pages = node.pages || (node.pages = []),
-							categories = node.categories || (node.categories = [])
+				const append = (parent, title, initNode) => {
+						const pages = parent.pages || (parent.pages = []),
+							children = parent.children || (parent.children = {})
 						pages.push(page)
-						return (categories[title] = initCategory(categories[title]))
+						return (children[title] = initNode(children[title] ))
 					},
-					node = page.category.reduce(
-						(node, title) =>
-							append(node, title, (category) => category || { title: title, isCategory: true }),
+					parent = page.category.reduce(
+						(parent, title) =>
+							append(parent, title, (node) => (node || {
+								title,
+								isPage: false,
+								isCategory: true,
+								data,
+								pkg
+							})),
 						indexPage
 					)
-				append(node, page.title, (category) => {
-					if (category) {
-						page.categories = category.categories
-						page.pages = category.pages
+				page.isPage = true
+				append(parent, page.title, (node) => {
+					if(node){
+						page.pages = node.pages
+						page.children = node.children
+						page.isCategory = node.isCategory
 					}
 					return page
 				})
 			}
 		})
 
-		initCategories(indexPage)
+		initHierachy(indexPage)
 
-		pages.forEach((page) => (page.source = page.compile(page)))
+		pages.forEach((page) => {
+			page.allPages = indexPage.pages
+			page.source = page.compiler(page)
+		})
+
 		return [indexPage, pages]
 
-		function initCategories(node) {
-			if (node.categories) {
+		function initHierachy(node) {
+			if (node.children) {
 				node.pages.sort((p1, p2) => p1.id.localeCompare(p2.id))
-				node.categories = Object.values(node.categories)
-					.map((node) => initCategories(node))
+				node.children = Object.values(node.children)
+					.map((node) => initHierachy(node))
 					.sort((p1, p2) => {
-						if (!!p1.categories === !!p2.categories) {
-							return p1.title.localeCompare(p2.title)
-						}
-						return !!p1.categories === !!p2.categories
+						return p1.isCategory === p2.isCategory
 							? p1.title.localeCompare(p2.title)
-							: p1.categories
+							: p1.isCategory
 							? 1
 							: -1
 					})
-				node.walkCategory = (enter, exit) => {
-					walkCategory(node.categories, 0, enter, exit)
+				node.walkHierachy = (enter, exit) => {
+					walkHierachy(node.children, 0, enter, exit)
 				}
+			} else {
+				node.walkHierachy = ()=>{}
 			}
 			return node
 		}
 
-		function walkCategory(nodes, level, enter, exit) {
+		function walkHierachy(nodes, level, enter, exit) {
 			nodes.forEach((node, i) => {
 				enter(node, i, level)
-				if (node.categories) {
-					walkCategory(node.categories, level + 1, enter, exit)
+				if (node.children) {
+					walkHierachy(node.children, level + 1, enter, exit)
 				}
-				exit(node, i, level)
+				exit && exit(node, i, level)
 			})
 		}
 	}
 
-	function createPage(compile, id, page, script) {
+	function createPage(compiler, id, page, main) {
 		const dir = dirname(page)
 		let title = getTitle(id, page, pkg),
 			category
@@ -290,34 +295,34 @@ module.exports = function (options = {}) {
 		}
 		return {
 			id,
+			page,
+			main: main && normalizePath(relative(dir, main)),
 			title,
 			category,
-			page,
-			script,
+			dir,
 			data,
 			pkg,
-			compile,
-			header: (data.header || []).concat(scriptTag(requirejs)).map(parseTag),
-			body: (data.body || [])
-				.concat(
-					(script && {
-						tag: 'script',
-						body: `require(["${normalizePath(relative(dir, script))}"])`
-					}) ||
-						[]
-				)
-				.map(parseTag)
+			header: header.map(parseTag),
+			body: body.map(parseTag),
+			compiler
 		}
 
-		function parseTag(tag) {
-			if (typeof tag === 'string') return tag
+		function parseTag(tag){
+			if (typeof tag === 'string') return { html: ()=> tag }
 			const { tag: tagName, attrs, body } = tag
 
-			return `<${tagName} ${Object.entries({ ...defaultTagAttrs[tagName], ...attrs })
-				.map(([attr, value]) => {
-					return `${attr}="${value && linkAttrs[attr] ? normalizePath(relative(dir, value)) : value}"`
-				})
-				.join(' ')}${closedTag[tagName] ? `>` : `>${body || ''}</${tagName}>`}`
+			return {
+				tag: tagName,
+				attrs: mapObj({ ...defaultTagAttrs[tagName], ...attrs }, (value, attr) => {
+					return linkAttrs[attr] ? normalizePath(relative(dir, value)) : value
+				}),
+				body: body || '',
+				html() {
+					return `<${this.tag} ${Object.entries(this.attrs)
+						.map(([attr, value])=>`${attr}="${value}"`).join(' ')
+					}${closedTag[tagName] ? `>` : `>${this.body}</${this.tag}>`}`
+				}
+			}
 		}
 	}
 

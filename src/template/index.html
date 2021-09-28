@@ -11,15 +11,15 @@
 			</div>
 			<!-- prettier-ignore -->
 			<div class="menu">
-				<%walkCategory((page, i, level)=>{ var pad='\t'.repeat(level);%>
-				<%=pad%><div class="<%-page.categories?'node':'leaf'%>"><%if(page.isCategory){%>
-					<%=pad%><span class="category"><%-page.title%></span><%}else{%>
+				<%walkHierachy((page, i, level)=>{ var pad='\t'.repeat(level);%>
+				<%=pad%><div class="<%-page.isCategory?'node':'leaf'%>"><%if(page.isPage){%>
 					<%=pad%><a class="page"
 						  href="<%-page.page%>"
 						  target="viewer"
 						  onClick="document.getElementById('title').innerText='<%-page.category.concat(page.title).join(' / ')%>'">
 						<%=pad%><%-page.title%>
-					<%=pad%></a><%}%> <%},(page, i, level)=>{%>
+					<%=pad%></a><%}else{%>
+					<%=pad%><span class="category"><%-page.title%></span><%}%><%},(page, i, level)=>{%>
 				<%='\t'.repeat(level)%></div>
 				<%})%>
 			</div>
