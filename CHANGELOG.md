@@ -1,3 +1,9 @@
+# [1.3.0](https://github.com/billowz/rollup-plugin-pages/compare/v1.2.0...v1.3.0 ) (2021-11-26)
+
+### Features
+
+* add server proxy support ([e24d20b](https://github.com/billowz/rollup-plugin-pages/commit/e24d20b ))
+
 # [1.2.0](https://github.com/billowz/rollup-plugin-pages/compare/v1.1.0...v1.2.0 ) (2021-09-28)
 
 ### Features
