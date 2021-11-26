@@ -1,13 +1,14 @@
 const Koa = require('koa'),
 	koaStatic = require('koa-static'),
 	koaMount = require('koa-mount'),
+	koaProxy = require('koa-proxy'),
 	path = require('path'),
 	os = require('os'),
 	{ bold, green } = require('colorette'),
 	{ normalizePath } = require('./util')
 
 class Server {
-	constructor({ host, port, statics = [], publicPath, defaultPage = 'index.html', sources } = {}) {
+	constructor({ host, port, statics = [], publicPath, defaultPage = 'index.html', sources, proxies = [] } = {}) {
 		this.host = host || '0.0.0.0'
 		this.port = port || '8080'
 		this.publicPath = publicPath || '/'
@@ -40,6 +41,10 @@ class Server {
 				console.log(`mount static sources: ${green(dir.mount)} from directory ${green(dir.path)}`)
 				this.use(koaStatic(dir.path), dir.mount)
 			}
+		})
+
+		proxies.forEach((proxy) => {
+			this.use(koaProxy(proxy), proxy.mount)
 		})
 	}
 

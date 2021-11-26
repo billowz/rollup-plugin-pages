@@ -5,6 +5,19 @@ export declare type ServerOptions = {
 	port?: number
 	statics?: (string | { path: string; mount?: string })[]
 	publicPath?: string
+	proxies?: { 
+		mount?: string
+		host?: string
+		url?: string
+		match?: RegExp
+		map: ((path: string)=> string) | {[k:string]: string}
+		jar?: boolean
+		followRedirect?: boolean
+		suppressRequestHeaders?: string[]
+		suppressResponseHeaders?: string[]
+		overrideResponseHeaders?: {[k:string]: string}
+		requestOptions?: ((request: any, options: any)=> any ) | {[k:string]: string}
+	}[]
 }
 
 export declare type Tag =

@@ -12,7 +12,7 @@ export default {
 			},
 			assets: ['test/samples/**/*.css', 'test/samples/**/*.jpg']
 		}),
-		resolve(),
+		resolve()
 	],
 	output: {
 		compact: false,
