@@ -171,7 +171,7 @@ before_test:
     - ps: StartTimeInfo "Running Tests..."
 
 test_script:
-    - npm test
+    #- npm test
 
 after_test:
     - ps: EndTimeInfo "Run all Tests"
