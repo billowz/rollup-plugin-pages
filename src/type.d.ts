@@ -5,19 +5,20 @@ export declare type ServerOptions = {
 	port?: number
 	statics?: (string | { path: string; mount?: string })[]
 	publicPath?: string
-	proxies?: { 
+	proxies?: {
 		mount?: string
 		host?: string
 		url?: string
 		match?: RegExp
-		map: ((path: string)=> string) | {[k:string]: string}
+		map: ((path: string) => string) | { [k: string]: string }
 		jar?: boolean
 		followRedirect?: boolean
 		suppressRequestHeaders?: string[]
 		suppressResponseHeaders?: string[]
-		overrideResponseHeaders?: {[k:string]: string}
-		requestOptions?: ((request: any, options: any)=> any ) | {[k:string]: string}
+		overrideResponseHeaders?: { [k: string]: string }
+		requestOptions?: ((request: any, options: any) => any) | { [k: string]: string }
 	}[]
+	middlewares: (Koa.Middleware | [Koa.Middleware, string])[]
 }
 
 export declare type Tag =

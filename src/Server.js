@@ -8,7 +8,16 @@ const Koa = require('koa'),
 	{ normalizePath } = require('./util')
 
 class Server {
-	constructor({ host, port, statics = [], publicPath, defaultPage = 'index.html', sources, proxies = [] } = {}) {
+	constructor({
+		host,
+		port,
+		middlewares = [],
+		statics = [],
+		publicPath,
+		defaultPage = 'index.html',
+		sources,
+		proxies = []
+	} = {}) {
 		this.host = host || '0.0.0.0'
 		this.port = port || '8080'
 		this.publicPath = publicPath || '/'
@@ -18,7 +27,7 @@ class Server {
 		this.app = new Koa()
 
 		this.use((ctx, next) => {
-			const reqPath = parseSourcePath(ctx.path)
+			const reqPath = parseSourcePath(decodeURIComponent(ctx.path))
 			if (!reqPath) {
 				ctx.response.redirect(defaultPage)
 				return
@@ -40,6 +49,14 @@ class Server {
 			} else if (dir) {
 				console.log(`mount static sources: ${green(dir.mount)} from directory ${green(dir.path)}`)
 				this.use(koaStatic(dir.path), dir.mount)
+			}
+		})
+
+		middlewares.forEach((middleware) => {
+			if (Array.isArray(middleware)) {
+				this.use(middleware[0], middleware[1])
+			} else {
+				this.use(middleware)
 			}
 		})
 
