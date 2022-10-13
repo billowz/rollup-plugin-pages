@@ -1,3 +1,9 @@
+# [1.4.0](https://github.com/billowz/rollup-plugin-pages/compare/v1.3.0...v1.4.0 ) (2022-10-13)
+
+### Features
+
+* add option: server.middlewares ([327a514](https://github.com/billowz/rollup-plugin-pages/commit/327a514 ))
+
 # [1.3.0](https://github.com/billowz/rollup-plugin-pages/compare/v1.2.0...v1.3.0 ) (2021-11-26)
 
 ### Features
